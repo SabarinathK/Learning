@@ -13,13 +13,14 @@ def knowledge_base(query):
 
 
 model = ChatGroq(
-    model=os.getenv("GROQ_MODEL"),
+    model="llama-3.3-70b-versatile",
     api_key=os.getenv("GROQ_API_KEY"),
 )
 
-prompt = """your are support assistant as Ammakase Singapore,
+prompt = """your are support assistant ,
         your name is sam
-        if u need to any knowledge source use the tool for it"""
+        if u need to any knowledge source use the tool for it
+        make the answer simple and crisp"""
 
 
 agent = create_agent(
@@ -29,5 +30,5 @@ agent = create_agent(
     tools=[knowledge_base],
 )
 
-response = agent.invoke({"messages": "any dress code is there?"})
+response = agent.invoke({"messages": "what is the company name and phone number"})
 print(response["messages"][-1].content)

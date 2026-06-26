@@ -3,25 +3,15 @@ from pydantic import BaseModel
 from langchain.agents import create_agent
 from langchain_groq import ChatGroq
 from langchain_google_genai.embeddings import GoogleGenerativeAIEmbeddings
-from langchain_community.document_loaders import PyPDFLoader
-from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
 from langchain.tools import tool
 from dotenv import load_dotenv
 import os
+from config import engine
 
 load_dotenv(override=True)
 
 app = FastAPI(title="Company Support API")
-
-
-embeddings = GoogleGenerativeAIEmbeddings(model="gemini-embedding-2-preview")
-
-engine = Chroma(
-    collection_name="PDF_Rag",
-    embedding_function=embeddings,
-    persist_directory="chroma.db",
-)
 
 
 @tool
