@@ -1,14 +1,9 @@
 from langchain_community.document_loaders import WebBaseLoader
-
-
-loader = WebBaseLoader("https://novagito.com/")
-
-# text=loader.load()
-
-# print(text)
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 import asyncio
 from crawl4ai import AsyncWebCrawler
+from langchain_core.documents import Document
 
 URL = "https://novagito.com/"
 
@@ -32,7 +27,13 @@ async def main():
         # Remove extra blank lines
         text = re.sub(r"\n\s*\n+", "\n\n", text)
 
-        print(text)
+        metadata = {"url": result.url}
+        content = text
+    return [Document(page_content=content, metadata=metadata)]
 
+docs=asyncio.run(main())
 
-asyncio.run(main())
+data_split = RecursiveCharacterTextSplitter(chunk_size=200, chunk_overlap=20)
+all_split = data_split.split_documents(docs)
+print(len(all_split))
+
