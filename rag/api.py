@@ -12,16 +12,11 @@ import os
 
 load_dotenv(override=True)
 
-app = FastAPI(title="Ammakase Support API")
+app = FastAPI(title="Company Support API")
 
-# ------------------------
-# Embeddings
-# ------------------------
+
 embeddings = GoogleGenerativeAIEmbeddings(model="gemini-embedding-2-preview")
 
-# ------------------------
-# Vector Store
-# ------------------------
 engine = Chroma(
     collection_name="PDF_Rag",
     embedding_function=embeddings,
@@ -29,9 +24,6 @@ engine = Chroma(
 )
 
 
-# ------------------------
-# Tool
-# ------------------------
 @tool
 def knowledge_base(query: str):
     """Search Ammakase knowledge base"""
@@ -40,19 +32,14 @@ def knowledge_base(query: str):
     return "\n\n".join([doc.page_content for doc in docs])
 
 
-# ------------------------
-# LLM
-# ------------------------
 model = ChatGroq(
     model="openai/gpt-oss-120b",
     api_key=os.getenv("GROQ_API_KEY"),
 )
 
-# ------------------------
-# Agent
-# ------------------------
+
 prompt = """
-You are Sam, a customer support assistant for Ammakase Singapore.
+You are Sam, a customer support assistant.
 
 Rules:
 - Answer only based on the knowledge base.
@@ -69,16 +56,10 @@ agent = create_agent(
 )
 
 
-# ------------------------
-# Request Schema
-# ------------------------
 class ChatRequest(BaseModel):
     question: str
 
 
-# ------------------------
-# API Endpoint
-# ------------------------
 @app.post("/answer")
 async def answer_question(request: ChatRequest):
     try:
@@ -108,9 +89,6 @@ async def answer_question(request: ChatRequest):
         )
 
 
-# ------------------------
-# Health Check
-# ------------------------
 @app.get("/health")
 async def health():
     return {"status": "healthy"}
